@@ -1,9 +1,9 @@
 import { db } from "../config/db";
 
 const createUsersTableQuery = `
-  CREATE TABLE users (
+  CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT NOT NULL,
+    username TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -11,7 +11,7 @@ const createUsersTableQuery = `
 `
 
 const createApiTableQuery = `
-  CREATE TABLE apis (
+  CREATE TABLE IF NOT EXISTS apis (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     key TEXT NOT NULL,
@@ -21,11 +21,16 @@ const createApiTableQuery = `
   )
 `
 
-db.serialize(() => {
-  console.log("Seeding database...")
 
-  db.run(createUsersTableQuery)
-  db.run(createApiTableQuery)
-})
+export const seed = () => {
+  db.serialize(() => {
+    console.log("Seeding database...")
 
-db.close()
+    db.run(createUsersTableQuery)
+    db.run(createApiTableQuery)
+  })
+
+  db.close()
+}
+
+seed()
