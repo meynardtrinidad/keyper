@@ -4,3 +4,6 @@ dist
 
 # Environment variables
 .env
+
+# Files
+test.db
