@@ -1,10 +1,14 @@
 import { db } from "../config/db";
-import { InsertUser } from "../types/user";
 
 const insertUserQuery = `
   INSERT INTO users (username, password)
   VALUES (?, ?)
 `
+
+export type InsertUser = {
+  username: string
+  password: string
+}
 
 export const insertUser = (payload: InsertUser) => {
   return new Promise((resolve, reject) => {

@@ -10,24 +10,24 @@ const createUsersTableQuery = `
   )
 `
 
-const createApiTableQuery = `
-  CREATE TABLE IF NOT EXISTS apis (
+const createKeysTableQuery = `
+  CREATE TABLE IF NOT EXISTS keys (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
-    key TEXT NOT NULL,
+    identifier TEXT NOT NULL UNIQUE,
+    hash TEXT NOT NULL UNIQUE,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id)
   )
 `
 
-
 export const seed = () => {
   db.serialize(() => {
     console.log("Seeding database...")
 
     db.run(createUsersTableQuery)
-    db.run(createApiTableQuery)
+    db.run(createKeysTableQuery)
   })
 
   db.close()
