@@ -11,18 +11,18 @@ const insertKeyQuery = `
   VALUES (?, ?, ?)
 `
 
-export const insertKey = (payload: InsertKey) => {
+export const insertKey = (payload: InsertKey): Promise<Error | number> => {
   return new Promise((resolve, reject) => {
     const stmt = db.prepare(insertKeyQuery)
-    stmt.run([payload.userId, payload.identifier, payload.hash], (err) => {
+    stmt.run([payload.userId, payload.identifier, payload.hash], function(err: Error | null) {
       if (err) reject(err)
-      resolve(true)
+      resolve(this.lastID)
     })
   })
 }
 
 const getKeyWithIdentifierQuery = `
-  SELECT (identifier, hash) FROM keys
+  SELECT hash FROM keys
   WHERE identifier = ?
 `
 

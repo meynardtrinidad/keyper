@@ -10,12 +10,12 @@ export type InsertUser = {
   password: string
 }
 
-export const insertUser = (payload: InsertUser) => {
+export const insertUser = (payload: InsertUser): Promise<Error | number> => {
   return new Promise((resolve, reject) => {
     const stmt = db.prepare(insertUserQuery)
-    stmt.run([payload.username, payload.password], (err) => {
+    stmt.run([payload.username, payload.password], function(err) {
       if (err) reject(err)
-      resolve(true)
+      resolve(this.lastID)
     })
   })
 }

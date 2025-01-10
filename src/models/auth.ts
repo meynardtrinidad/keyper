@@ -10,7 +10,6 @@ export const getUsernameAndPassword = (username: string) => {
     const stmt = db.prepare(getUsernameAndPasswordQuery)
     stmt.get([username], (err, row) => {
       if (err) reject(err)
-
       resolve(row)
     })
   })
