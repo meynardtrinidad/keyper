@@ -4,5 +4,6 @@ import { rootPath } from "../app";
 
 const sqlite3 = verbose()
 
-const DB_URL = process.env.DB_URL || path.join(rootPath, "..", "./test.db") // Assumes test.db if the app is not running
+const DB_NAME = process.env.DB_NAME ? `${process.env.DB_NAME}.db` : "test.db"
+const DB_URL = path.join(rootPath, "..", DB_NAME) // Or :memory:
 export const db = new sqlite3.Database(DB_URL)

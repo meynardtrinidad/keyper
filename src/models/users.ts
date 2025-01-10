@@ -1,5 +1,4 @@
 import { db } from "../config/db";
-import { Callback } from "../types/db";
 import { InsertUser } from "../types/user";
 
 const insertUserQuery = `
@@ -7,7 +6,12 @@ const insertUserQuery = `
   VALUES (?, ?)
 `
 
-export const insertUser = (payload: InsertUser, cb?: Callback) => {
-  const stmt = db.prepare(insertUserQuery)
-  stmt.run([payload.username, payload.password], cb)
+export const insertUser = (payload: InsertUser) => {
+  return new Promise((resolve, reject) => {
+    const stmt = db.prepare(insertUserQuery)
+    stmt.run([payload.username, payload.password], (err) => {
+      if (err) reject(err)
+      resolve(true)
+    })
+  })
 }
