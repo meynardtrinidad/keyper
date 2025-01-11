@@ -32,11 +32,21 @@ const authRouter = (fastify: FastifyInstance) => {
     response.message = "Login successful"
     response.jwt = ""
 
-    return reply.status(response.statusCode).send(response)
+    return reply
+      .status(response.statusCode)
+      .send(response)
   })
 
   fastify.post('/logout', async (request, reply) => {
-    return reply.status(200).send()
+    const response: AuthResponse = {
+      status: "OK",
+      statusCode: 200,
+      message: "Logout successful"
+    }
+
+    return reply
+      .status(response.statusCode)
+      .send(response)
   })
 }
 

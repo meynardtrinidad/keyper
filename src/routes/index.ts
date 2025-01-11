@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify"
 import authRouter from "./auth"
 import { logger } from "../middleware/logger"
+import keyRouter from "./key"
 
 const rootRouter = (fastify: FastifyInstance) => {
   fastify.addHook('preHandler', logger)
@@ -12,6 +13,7 @@ const rootRouter = (fastify: FastifyInstance) => {
   })
 
   fastify.register(authRouter, { prefix: "/auth" })
+  fastify.register(keyRouter, { prefix: "/key" })
 }
 
 export default rootRouter
