@@ -24,6 +24,27 @@ export const insertKey = (payload: InsertKey): Promise<Error | number> => {
   })
 }
 
+const upsertKeyQuery = `
+  INSERT INTO keys (user_id, identifier, hash)
+  VALUES ($user_id, $identifier, $hash)
+  ON CONFLICT (user_id) DO UPDATE
+  SET identifier = $identifier, hash = $hash
+`
+
+export const upsertKey = (payload: InsertKey): Promise<Error | number> => {
+  return new Promise((resolve, reject) => {
+    const stmt = db.prepare(upsertKeyQuery)
+    stmt.run({
+      $user_id: payload.userId,
+      $identifier: payload.identifier,
+      $hash: payload.hash
+    }, function(err: Error | null) {
+      if (err) reject(err)
+      resolve(this.lastID)
+    })
+  })
+}
+
 const updateKeyQuery = `
   UPDATE keys
   SET identifier = ?, hash = ?

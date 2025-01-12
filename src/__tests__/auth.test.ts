@@ -65,7 +65,6 @@ describe("auth flow", () => {
         password: PASSWORD
       })
 
-    console.log(response.body)
     expect(response.status).toBe(200)
     expect(response.body).not.toBeUndefined()
     expect(response.body.jwt).not.toBe("")
@@ -76,18 +75,15 @@ describe("auth flow", () => {
       .get("/api/v1/key/generate")
       .set({ 'authorization': `Bearer ${token}` })
 
-    console.log(response1.body)
     expect(response1.status).toBe(200)
     expect(response1.body).not.toBeUndefined()
 
     const apiKey = response1.body?.data?.apiKey
-    console.log({ apiKey })
     expect(apiKey).not.toBeUndefined()
     const response2 = await request(fastify.server)
       .get("/api/v1/quote")
       .set({ 'authorization': `Bearer ${apiKey}` })
 
-    console.log({ response2: response2.body })
     expect(response2.status).toBe(200)
     expect(response2.body).not.toBeUndefined()
   })

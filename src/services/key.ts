@@ -1,5 +1,5 @@
 import { KeyV1 } from "../utils/key"
-import { getKeyWithIdentifier, getKeyWithIdentifierOrUserId, insertKey } from "../models/key"
+import { getKeyWithIdentifier, getKeyWithIdentifierOrUserId, getKeyWithUserId, insertKey, upsertKey } from "../models/key"
 import { KEY_LENGTH, SALT_ROUNDS } from "../config/constants"
 import bcrypt from "bcrypt"
 import { cache } from "../config/cache"
@@ -17,18 +17,14 @@ export const createKey = async (userId: number): Promise<string> => {
   const key = new KeyV1({ length: KEY_LENGTH })
 
   const [identifier, secret] = key.getKeys()
-  const existingKey = await getKeyWithIdentifierOrUserId(userId, identifier)
+  const existingKey = await getKeyWithIdentifier(identifier)
 
   if (existingKey) {
     throw new Error("Key already exists.")
   }
 
   const hash = await bcrypt.hash(secret, SALT_ROUNDS)
-
-  // TODO: Update the key instead if the userId
-  // already exists in the `keys` table.
-
-  const err = await insertKey({
+  const err = await upsertKey({
     userId: userId,
     identifier: identifier,
     hash: hash

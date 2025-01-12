@@ -12,7 +12,6 @@ const start = async () => {
   try {
     await fastify.listen({ port: parseInt(PORT) })
   } catch (err) {
-    console.log(err)
     fastify.log.error(err)
     process.exit(1)
   }
