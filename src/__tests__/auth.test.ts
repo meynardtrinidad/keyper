@@ -65,7 +65,18 @@ describe("auth flow", () => {
         password: PASSWORD
       })
 
-    console.log(response)
+    console.log(response.body)
+    expect(response.status).toBe(200)
+    expect(response.body).not.toBeUndefined()
+    expect(response.body.jwt).not.toBe("")
+  })
+
+  it("should successfully access a protected resource", async () => {
+    const response = await request(fastify.server)
+      .get("/api/v1/key/generate")
+      .set({ 'authorization': `Bearer ${token}` })
+
+    console.log(response.body)
     expect(response.status).toBe(200)
     expect(response.body).not.toBeUndefined()
   })

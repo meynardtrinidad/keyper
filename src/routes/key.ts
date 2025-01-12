@@ -7,7 +7,7 @@ import { isAuthenticated } from "../middleware/auth";
 const keyRouter = (fastify: FastifyInstance) => {
   fastify.addHook('preHandler', isAuthenticated)
 
-  fastify.post('/generate', async (request, reply) => {
+  fastify.get('/generate', async (request, reply) => {
     const response: Response = {
       status: "Internal Server Error",
       statusCode: 500,
@@ -41,7 +41,7 @@ const keyRouter = (fastify: FastifyInstance) => {
       .send(response)
   })
 
-  fastify.post('/revoke', async (request, reply) => {
+  fastify.get('/revoke', async (request, reply) => {
     const response: Response = {
       status: "OK",
       statusCode: 200,

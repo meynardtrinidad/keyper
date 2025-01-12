@@ -2,6 +2,8 @@ import { FastifyInstance } from "fastify";
 import { AuthResponse } from "../types/response";
 import { getUsernameAndPassword } from "../models/auth";
 import { LoginPayload } from "../types/payload";
+import jwt from "jsonwebtoken"
+import { JWT_SECRET } from "../config/constants";
 
 const authRouter = (fastify: FastifyInstance) => {
   fastify.post('/', async (request, reply) => {
@@ -30,7 +32,11 @@ const authRouter = (fastify: FastifyInstance) => {
     response.status = "OK"
     response.statusCode = 200
     response.message = "Login successful"
-    response.jwt = ""
+    response.jwt = jwt.sign({
+      userId: user.id
+    }, JWT_SECRET, {
+      expiresIn: '5m'
+    })
 
     return reply
       .status(response.statusCode)

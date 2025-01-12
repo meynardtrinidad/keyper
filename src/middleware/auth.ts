@@ -6,25 +6,30 @@ import { JWT_SECRET } from "../config/constants";
 import { FastifyRequestWithUser } from "../types/request";
 
 export const isAuthenticated = (request: FastifyRequest, reply: FastifyReply, done: Done) => {
-  const token = request.headers.authorization
+  const authHeader = request.headers.authorization
   const response: AuthResponse = {
     status: "Forbidden",
     statusCode: 403,
     message: "Invalid JWT token."
   }
 
-  if (!token) {
+  if (!authHeader) {
     return reply
       .status(response.statusCode)
       .send(response)
   }
 
-  try {
-    const payload: unknown[] = jwt.verify(token, JWT_SECRET).split('.')
-    console.log(payload)
+  const token = authHeader.split(" ")[1]
 
-    if (payload.length) {
-      (request as FastifyRequestWithUser).user = payload[1] as { id: number }
+  try {
+    const payload = jwt.verify(token, JWT_SECRET) as { userId?: number }
+
+    if (payload.userId) {
+      (request as FastifyRequestWithUser).user = {
+        id: payload.userId
+      }
+    } else {
+      throw new Error("Unknown payload.")
     }
   } catch (err) {
     console.log(`Error verifying token:`, err)
