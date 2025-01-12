@@ -6,6 +6,7 @@ import { FastifyRequestWithUser } from "../types/request";
 import { KeyV1 } from "../utils/key";
 import bcrypt from "bcrypt"
 import { cache } from "../config/cache";
+import { getKeyWithIdentifier } from "../models/key";
 
 
 /**
@@ -68,11 +69,16 @@ export const isValid = async (request: FastifyRequest, reply: FastifyReply) => {
 
   try {
     const [_, identifier, secret] = KeyV1.separate(apiKey)
-    const hash = cache.get(identifier)
+    let hash = cache.get(identifier)
 
     if (!hash) {
-      // TODO: Look on database based on identifier 
-      throw new Error("Does not exists.")
+      const result = await getKeyWithIdentifier(identifier) as { hash: string }
+
+      if (!result) {
+        throw new Error("Does not exists.")
+      }
+
+      hash = result.hash
     }
 
     const isValid = await bcrypt.compare(secret, hash)

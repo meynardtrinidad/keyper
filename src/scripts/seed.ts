@@ -13,7 +13,7 @@ const createUsersTableQuery = `
 const createKeysTableQuery = `
   CREATE TABLE IF NOT EXISTS keys (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL UNIQUE,
     identifier TEXT NOT NULL UNIQUE,
     hash TEXT NOT NULL UNIQUE,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
