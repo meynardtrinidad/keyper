@@ -3,6 +3,7 @@ import authRouter from "./auth"
 import { logger } from "../middleware/logger"
 import keyRouter from "./key"
 import { Done } from "../types/middleware"
+import quoteRouter from "./quote"
 
 const rootRouter = (fastify: FastifyInstance, _: { prefix: string }, done: Done) => {
   fastify.addHook('preHandler', logger)
@@ -15,6 +16,7 @@ const rootRouter = (fastify: FastifyInstance, _: { prefix: string }, done: Done)
 
   fastify.register(authRouter, { prefix: "/auth" })
   fastify.register(keyRouter, { prefix: "/key" })
+  fastify.register(quoteRouter, { prefix: "/quote" })
 
   done()
 }

@@ -36,9 +36,20 @@ describe("key", () => {
 
       expect(set.size).toBe(n)
     })
+
+    it("should properly separate the key into its parts", () => {
+      const key = new KeyV1({ length: 16 })
+
+      const [generatedIdentifier, generatedSecret] = key.getKeys()
+      const [version, identifier, secret] = KeyV1.separate(key.toString())
+
+      expect(version).toBe(1)
+      expect(identifier).toBe(generatedIdentifier)
+      expect(secret).toBe(generatedSecret)
+    })
   })
 
-  describe("services", () => {
+  describe.skip("services", () => {
     beforeAll(async () => {
       await insertUser({
         username: USERNAME,

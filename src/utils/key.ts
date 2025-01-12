@@ -6,9 +6,10 @@ type KeyOptions = {
 }
 
 const SEPARATOR = "_"
+const VERSION = 1
 
 export class KeyV1 {
-  public readonly version = 1
+  public readonly version = VERSION
   public length: number
   public prefix: string
   private identifier: string
@@ -34,5 +35,25 @@ export class KeyV1 {
 
   toString(): string {
     return [this.prefix, this.identifier, this.secret].join(SEPARATOR)
+  }
+
+  /**
+   * Returns three values: `version`, `identifier` and `secret`
+   * respectively.
+   *
+   * @returns [number, string, string]
+   */
+  static separate(key: string): [number, string, string] {
+    const tokens = key.split(SEPARATOR)
+    if (tokens.length != 3) {
+      throw new Error("Invalid Token")
+    }
+
+    const version = parseInt(tokens[0].slice(1, tokens[0].length))
+    if (version != VERSION) {
+      throw new Error("Incorrect Version")
+    }
+
+    return [VERSION, tokens[1], tokens[2]]
   }
 }

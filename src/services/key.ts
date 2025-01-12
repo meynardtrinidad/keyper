@@ -1,9 +1,8 @@
 import { KeyV1 } from "../utils/key"
 import { getKeyWithIdentifier, insertKey } from "../models/key"
+import { KEY_LENGTH, SALT_ROUNDS } from "../config/constants"
 import bcrypt from "bcrypt"
-
-const length = 16
-const SALT_ROUNDS = 10
+import { cache } from "../config/cache"
 
 /**
  * NOTE: This is a one-time-display key since the key will
@@ -15,7 +14,7 @@ const SALT_ROUNDS = 10
  * will use.
  */
 export const createKey = async (userId: number): Promise<string> => {
-  const key = new KeyV1({ length: length })
+  const key = new KeyV1({ length: KEY_LENGTH })
 
   const [identifier, secret] = key.getKeys()
   const existingKey = await getKeyWithIdentifier(identifier)
@@ -34,6 +33,8 @@ export const createKey = async (userId: number): Promise<string> => {
   if (err instanceof Error) {
     throw err
   }
+
+  cache.set(identifier, hash)
 
   return key.toString()
 }

@@ -17,6 +17,8 @@ const keyRouter = (fastify: FastifyInstance) => {
     let key: string | undefined
     let count = 0
 
+    // Generate at least 3 times in case that there is a conflict
+    // encountered such as conflicting identifier
     while (count < 3) {
       try {
         key = await createKey((request as FastifyRequestWithUser).user.id)

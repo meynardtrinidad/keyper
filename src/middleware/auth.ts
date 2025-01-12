@@ -1,11 +1,18 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { Done } from "../types/middleware";
 import jwt from "jsonwebtoken"
 import { AuthResponse } from "../types/response";
 import { JWT_SECRET } from "../config/constants";
 import { FastifyRequestWithUser } from "../types/request";
+import { KeyV1 } from "../utils/key";
+import bcrypt from "bcrypt"
+import { cache } from "../config/cache";
 
-export const isAuthenticated = (request: FastifyRequest, reply: FastifyReply, done: Done) => {
+
+/**
+ * This middleware / plugin is responsible for checking the validity
+ * of a `JWT token` only.
+ */
+export const isAuthenticated = async (request: FastifyRequest, reply: FastifyReply) => {
   const authHeader = request.headers.authorization
   const response: AuthResponse = {
     status: "Forbidden",
@@ -37,6 +44,45 @@ export const isAuthenticated = (request: FastifyRequest, reply: FastifyReply, do
       .status(response.statusCode)
       .send(response)
   }
+}
 
-  done()
+/**
+ * This middleware / plugin is responsible for checking the validity
+ * of the `API key`.
+ */
+export const isValid = async (request: FastifyRequest, reply: FastifyReply) => {
+  const authHeader = request.headers.authorization
+  const response: AuthResponse = {
+    status: "Forbidden",
+    statusCode: 403,
+    message: "Invalid key."
+  }
+
+  if (!authHeader) {
+    return reply
+      .status(response.statusCode)
+      .send(response)
+  }
+
+  const apiKey = authHeader.split(" ")[1]
+
+  try {
+    const [_, identifier, secret] = KeyV1.separate(apiKey)
+    const hash = cache.get(identifier)
+
+    if (!hash) {
+      // TODO: Look on database based on identifier 
+      throw new Error("Does not exists.")
+    }
+
+    const isValid = await bcrypt.compare(secret, hash)
+    if (!isValid) {
+      throw new Error("Invalid key.")
+    }
+  } catch (err) {
+    console.log(`Error verifying api key:`, err)
+    return reply
+      .status(response.statusCode)
+      .send(response)
+  }
 }
