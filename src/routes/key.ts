@@ -1,8 +1,9 @@
 import { FastifyInstance } from "fastify";
 import { Response } from "../types/response";
-import { createKey } from "../services/key";
+import { createKey, revokeKey } from "../services/key";
 import { FastifyRequestWithUser } from "../types/request";
 import { isAuthenticated } from "../middleware/auth";
+import { deleteKey } from "../models/key";
 
 const keyRouter = (fastify: FastifyInstance) => {
   fastify.addHook('preHandler', isAuthenticated)
@@ -49,6 +50,8 @@ const keyRouter = (fastify: FastifyInstance) => {
       statusCode: 200,
       message: "Key revoked."
     }
+
+    await revokeKey((request as FastifyRequestWithUser).user.id)
 
     return reply
       .status(response.statusCode)

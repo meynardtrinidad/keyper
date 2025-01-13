@@ -66,9 +66,9 @@ curl -H 'Authorization: Bearer <api_key>' \
 
 ## Requirements
 
-- [ ] Should be able to access a protected resource using API key
+- [x] Should be able to access a protected resource using API key
 even if the JWT token is expired.
 - [x] Authentication
 - [x] API Key
     - [x] Generate API Key
-    - [ ] Revoke API Key
+    - [x] Revoke API Key
