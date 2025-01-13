@@ -1,9 +1,9 @@
 import { FastifyInstance } from "fastify";
-import { AuthResponse } from "../types/response";
-import { getUsernameAndPassword } from "../models/auth";
-import { LoginPayload } from "../types/payload";
+import { AuthResponse, Response } from "../types/response";
+import { LoginPayload, RegisterPayload } from "../types/payload";
 import jwt from "jsonwebtoken"
 import { JWT_SECRET } from "../config/constants";
+import { createUser, getUser } from "../services/auth";
 
 const authRouter = (fastify: FastifyInstance) => {
   fastify.post('/', async (request, reply) => {
@@ -15,14 +15,13 @@ const authRouter = (fastify: FastifyInstance) => {
 
     const body = request.body as LoginPayload
 
-    if (!body) {
+    if (!body || !(body.username || body.password)) {
       return reply
         .status(response.statusCode)
         .send(response)
     }
 
-    const user = await getUsernameAndPassword(body.username)
-
+    const user = await getUser(body)
     if (!user) {
       return reply
         .status(response.statusCode)
@@ -43,12 +42,32 @@ const authRouter = (fastify: FastifyInstance) => {
       .send(response)
   })
 
-  fastify.post('/logout', async (request, reply) => {
-    const response: AuthResponse = {
-      status: "OK",
-      statusCode: 200,
-      message: "Logout successful"
+  fastify.post('/register', async (request, reply) => {
+    const response: Response = {
+      status: "Bad Request",
+      statusCode: 400,
+      message: "Incorrect Payload"
     }
+
+    const body = request.body as RegisterPayload
+
+    if (!body || !(body.username || body.password)) {
+      return reply
+        .status(response.statusCode)
+        .send(response)
+    }
+
+    const user = await createUser(body)
+
+    if (!user) {
+      return reply
+        .status(response.statusCode)
+        .send(response)
+    }
+
+    response.status = "OK"
+    response.statusCode = 200
+    response.message = "Register successful"
 
     return reply
       .status(response.statusCode)

@@ -1,5 +1,5 @@
 import { KeyV1 } from "../utils/key"
-import { getKeyWithIdentifier, getKeyWithIdentifierOrUserId, getKeyWithUserId, insertKey, upsertKey } from "../models/key"
+import { getKeyWithIdentifier, upsertKey } from "../models/key"
 import { KEY_LENGTH, SALT_ROUNDS } from "../config/constants"
 import bcrypt from "bcrypt"
 import { cache } from "../config/cache"

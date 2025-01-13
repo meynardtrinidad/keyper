@@ -2,9 +2,12 @@ import jwt from "jsonwebtoken"
 import request from "supertest"
 import { fastify } from "../app";
 import { getUsernameAndPassword } from "../models/auth";
-import { insertUser } from "../models/users";
 import { JWT_SECRET } from "../config/constants";
 import rootRouter from "../routes";
+import { createUser } from "../services/auth";
+
+// TODO:
+// - Removal of the previous `test.db`
 
 const USERNAME = "john_doe"
 const PASSWORD = "password123"
@@ -22,7 +25,7 @@ beforeAll(async () => {
 describe("auth methods", () => {
   beforeAll(async () => {
     try {
-      await insertUser({
+      await createUser({
         username: USERNAME,
         password: PASSWORD
       })

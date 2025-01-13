@@ -1,13 +1,16 @@
-import { insertKey } from "../models/key"
-import { insertUser } from "../models/users"
+import { insertKey, upsertKey } from "../models/key"
+import { createUser } from "../services/auth"
 import { createKey } from "../services/key"
 import { KeyV1 } from "../utils/key"
 import bcrypt from "bcrypt"
 
+// TODO:
+// - Removal of the previous `test.db`
+
 const USERNAME = "john_doe"
 const PASSWORD = "password123"
 
-describe.skip("key generation", () => {
+describe("key generation", () => {
   it("should return an identifier and a secret ", () => {
     const key = new KeyV1({ length: 16 })
 
@@ -51,7 +54,7 @@ describe.skip("key generation", () => {
 describe("key services", () => {
   beforeAll(async () => {
     try {
-      await insertUser({
+      await createUser({
         username: USERNAME,
         password: PASSWORD
       })
@@ -60,14 +63,14 @@ describe("key services", () => {
     }
   })
 
-  it("should successfully insert to database", async () => {
+  it.skip("should successfully insert to database", async () => {
     const key = await createKey(1)
     console.log("Generated key:", key) // The generated key.
     expect(key).not.toBeUndefined()
     expect(key.length).toBeGreaterThan(0)
   })
 
-  it.skip("should error on same identifier", async () => {
+  it("should error on same identifier", async () => {
     const length = 16
     const key1 = new KeyV1({ length })
     const key2 = new KeyV1({ length })
@@ -77,7 +80,7 @@ describe("key services", () => {
     const hash1 = await bcrypt.hash(secret1, 10)
     const hash2 = await bcrypt.hash(secret2, 10)
 
-    await insertKey({
+    await upsertKey({
       userId: 1,
       hash: hash1,
       identifier: identifier
@@ -85,12 +88,12 @@ describe("key services", () => {
 
     const redundantInsert = async () => {
       await insertKey({
-        userId: 1,
+        userId: 2,
         hash: hash2,
         identifier: identifier
       })
     }
 
-    expect(redundantInsert()).rejects.toThrow()
+    await expect(redundantInsert()).rejects.toThrow()
   })
 })
