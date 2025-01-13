@@ -15,7 +15,7 @@ const authRouter = (fastify: FastifyInstance) => {
 
     const body = request.body as LoginPayload
 
-    if (!body || !(body.username || body.password)) {
+    if (!body || (!body.username || !body.password)) {
       return reply
         .status(response.statusCode)
         .send(response)
@@ -46,19 +46,17 @@ const authRouter = (fastify: FastifyInstance) => {
     const response: Response = {
       status: "Bad Request",
       statusCode: 400,
-      message: "Incorrect Payload"
+      message: "Incorrect payload."
     }
 
     const body = request.body as RegisterPayload
-
-    if (!body || !(body.username || body.password)) {
+    if (!body || (!body.username || !body.password)) {
       return reply
         .status(response.statusCode)
         .send(response)
     }
 
     const user = await createUser(body)
-
     if (!user) {
       return reply
         .status(response.statusCode)
@@ -67,7 +65,7 @@ const authRouter = (fastify: FastifyInstance) => {
 
     response.status = "OK"
     response.statusCode = 200
-    response.message = "Register successful"
+    response.message = "Register successful."
 
     return reply
       .status(response.statusCode)

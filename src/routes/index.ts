@@ -16,7 +16,7 @@ const rootRouter = (fastify: FastifyInstance, _: { prefix: string }, done: Done)
 
   fastify.register(authRouter, { prefix: "/auth" })
   fastify.register(keyRouter, { prefix: "/key" })
-  fastify.register(quoteRouter, { prefix: "/quote" })
+  fastify.register(quoteRouter, { prefix: "/quotes" })
 
   done()
 }

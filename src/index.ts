@@ -1,8 +1,6 @@
-import { config } from "dotenv"
+import "dotenv/config"
 import { fastify } from "./app"
 import rootRouter from "./routes"
-
-config()
 
 const PORT = process.env.PORT || '3000'
 
